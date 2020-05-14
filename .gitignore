@@ -34,3 +34,4 @@ rpc.cert
 rpc.key
 
 bin/*
+merge-upstream.sh
