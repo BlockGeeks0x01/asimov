@@ -2736,18 +2736,22 @@ func (s *PublicRpcAPI) GetRoundInfo(round uint32) (interface{}, error) {
 }
 
 func (s *PublicRpcAPI) GetBlockTemplate(privkey string, round uint32, slotIndex uint16) (interface{}, error) {
+	rpcsLog.Info("Call GetBlockTemplate")
 	acc, err := crypto.NewAccount(privkey)
 	if err != nil {
 		return nil,  internalRPCError(err.Error(), "privkey decode error")
 	}
 
 	// 5 seconds
-	blockInteval := 5.0 * 1000
+	blockInteval := 50.0 * 1000
+	startTime := time.Now()
 	block, err := s.cfg.BlockTemplateGenerator.ProduceNewBlock(acc,
 		common.GasFloor, common.GasCeil, round, slotIndex, blockInteval)
 	if err != nil {
 		return nil, internalRPCError(err.Error(), "failed to get block template")
 	}
+	rpcsLog.Info(fmt.Sprintf("ProduceNewBlock height: %v cost: %v tx: %v",
+		block.Height(), time.Now().Sub(startTime), len(block.Transactions())))
 	w := bytes.NewBuffer(make([]byte, 0, block.MsgBlock().SerializeSize()))
 	block.MsgBlock().Serialize(w)
 	return hexutil.Encode(w.Bytes()), nil
