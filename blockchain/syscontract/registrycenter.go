@@ -130,6 +130,7 @@ func (m *Manager) GetAssetInfoByAssetId(
 // contract of registry the number represents if an asset is restricted
 func (m *Manager) IsLimit(block *asiutil.Block,
 	stateDB vm.StateDB, assets *protos.Assets) int {
+	return 0
 	if _, ok := m.assetsUnrestrictedCache[*assets]; ok {
 		return 0
 	}
@@ -186,7 +187,7 @@ func (m *Manager) isLimit(block *asiutil.Block,
 // IsSupport returns a bool result, which represents if a restricted asset can be transfer
 func (m *Manager) IsSupport(block *asiutil.Block,
 	stateDB vm.StateDB, gasLimit uint64, assets *protos.Assets, address []byte) (bool, uint64) {
-
+	return true, 0
 	if gasLimit < common.SupportCheckGas {
 		return false, 0
 	}
